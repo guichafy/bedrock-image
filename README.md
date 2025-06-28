@@ -47,3 +47,22 @@ Para utilizá-la, configure o API Gateway para encaminhar o corpo da requisiçã
 como base64 (definindo `isBase64Encoded: true`). O cabeçalho `Content-Type`
 deve indicar o formato da imagem (por exemplo, `image/png`). A resposta da
 Lambda será o JSON retornado pelo Bedrock.
+
+### Estrutura da Lambda
+
+A pasta `lambda/` segue uma organização em camadas para facilitar a manutenção do código:
+
+```
+lambda/
+  src/
+    handlers/           # Funções Lambda
+    services/           # Integração com Bedrock e processamento de imagem
+    utils/              # Utilidades e logger
+    config/             # Constantes de configuração
+    errors/             # Erros personalizados
+  tests/
+    unit/
+    integration/
+  package.json          # Dependências da Lambda
+  index.js              # Ponto de entrada que reexporta o handler
+```
