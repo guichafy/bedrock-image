@@ -36,3 +36,14 @@ A resposta do modelo será exibida no console em formato JSON.
 ## Observação
 
 Caso esteja utilizando um modelo diferente, atualize a variável `MODEL_ID` no arquivo `.env` ou defina-a via variável de ambiente antes de executar o script.
+
+## Lambda via API Gateway
+
+O diretório `lambda/` contém uma função preparada para ser executada como AWS
+Lambda. Ela recebe uma imagem enviada pelo API Gateway e repassa o conteúdo ao
+modelo do Bedrock usando a mesma lógica do script de linha de comando.
+
+Para utilizá-la, configure o API Gateway para encaminhar o corpo da requisição
+como base64 (definindo `isBase64Encoded: true`). O cabeçalho `Content-Type`
+deve indicar o formato da imagem (por exemplo, `image/png`). A resposta da
+Lambda será o JSON retornado pelo Bedrock.
