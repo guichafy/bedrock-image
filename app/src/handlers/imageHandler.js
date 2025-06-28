@@ -1,7 +1,7 @@
-const logger = require('../utils/logger');
 const { parseBody } = require('../services/imageProcessingService');
 const { describeImage } = require('../services/bedrockService');
 const { InvalidImageError } = require('../errors/customErrors');
+const logger = require('../utils/logger');
 
 exports.handler = async (event) => {
   try {
