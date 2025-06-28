@@ -79,3 +79,11 @@ app/
   package.json          # Dependências da Lambda
   index.js              # Ponto de entrada que reexporta o handler
 ```
+
+## Integração contínua
+
+Um fluxo de trabalho do GitHub Actions executa os testes automatizados
+sempre que um pull request é aberto para a branch `main`. O workflow
+instala as dependências na pasta `app/` e roda os comandos `npm test`
+e `npm run coverage` para garantir que a cobertura mínima de testes seja
+atingida.
