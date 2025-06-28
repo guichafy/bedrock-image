@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  bedrock-image
+  
+  Sample SAM Template for bedrock-image
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+
+Resources:
+  BedrockImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          AWS_REGION: !Ref AWS::Region
+          MODEL_ID: anthropic.claude-3-sonnet-2024-04-09-v1:0
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: '*'
+      Events:
+        BedrockImageApi:
+          Type: Api
+          Properties:
+            Path: /describe-image
+            Method: post
+            RequestParameters:
+              - method.request.header.Content-Type
+            RestApiId: !Ref ServerlessRestApi
+
+  ServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+        - "image/*"
+        - "application/octet-stream"
+
+Outputs:
+  BedrockImageApi:
+    Description: "API Gateway endpoint URL for Prod stage for Bedrock Image function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/describe-image/"
+  BedrockImageFunction:
+    Description: "Bedrock Image Lambda Function ARN"
+    Value: !GetAtt BedrockImageFunction.Arn
+  BedrockImageFunctionIamRole:
+    Description: "Implicit IAM Role created for Bedrock Image function"
+    Value: !GetAtt BedrockImageFunctionRole.Arn
