@@ -1,6 +1,7 @@
 # Demo AWS Bedrock - Descrição de Imagens
 
 Este projeto demonstra como utilizar o SDK AWS para JavaScript (v3) para enviar uma imagem PNG ou JPG para um modelo do Bedrock e obter uma descrição em texto do que está presente na imagem.
+A comunicação com o modelo é feita utilizando a API [Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html).
 
 ## Pré‑requisitos
 
