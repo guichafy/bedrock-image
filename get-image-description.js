@@ -1,8 +1,6 @@
 require('dotenv').config();
-const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
+const { BedrockRuntimeClient, ConverseCommand } = require('@aws-sdk/client-bedrock-runtime');
 const fs = require('fs');
-const { TextDecoder } = require('util');
-
 async function main() {
   const imagePath = process.argv[2];
   if (!imagePath) {
@@ -18,42 +16,36 @@ async function main() {
   const imageBytes = fs.readFileSync(imagePath);
   const base64Image = imageBytes.toString('base64');
 
-  const payload = {
-    anthropic_version: 'bedrock-2023-05-31',
+  const params = {
+    modelId,
     messages: [
       {
         role: 'user',
         content: [
           {
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: 'image/png',
-              data: base64Image
+            image: {
+              format: 'png',
+              source: {
+                bytes: imageBytes
+              }
             }
           },
           {
-            type: 'text',
             text: 'Descreva a imagem.'
           }
         ]
       }
     ],
-    max_tokens: 512
+    inferenceConfig: {
+      maxTokens: 512
+    }
   };
 
-  const command = new InvokeModelCommand({
-    modelId,
-    contentType: 'application/json',
-    accept: 'application/json',
-    body: JSON.stringify(payload)
-  });
+  const command = new ConverseCommand(params);
 
   try {
     const response = await client.send(command);
-    const decoder = new TextDecoder('utf-8');
-    const data = JSON.parse(decoder.decode(response.body));
-    console.log(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(response, null, 2));
   } catch (err) {
     console.error('Invocation error:', err);
   }
