@@ -5,7 +5,7 @@ A comunicação com o modelo é feita utilizando a API [Converse](https://docs.a
 
 ## Pré‑requisitos
 
-- Node.js 16+ instalado.
+- Node.js 18+ instalado.
 - Credenciais AWS configuradas (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` e `AWS_REGION`).
 - Um modelo do Bedrock capaz de processar imagens. O exemplo utiliza o `anthropic.claude-3-sonnet-2024-04-09-v1:0`, mas você pode ajustar a variável `MODEL_ID` conforme necessário.
 
@@ -25,10 +25,16 @@ cp .env.example .env
 
 ## Uso
 
-Execute o script passando o caminho da imagem (PNG ou JPG) que deseja descrever:
+1. Inicie o servidor local do SAM:
 
 ```bash
-node get-image-description.js caminho/para/imagem.png
+./tests/run-lambda-server.sh
+```
+
+2. Em outro terminal, envie uma imagem em base64 para a API local:
+
+```bash
+./tests/test-api-base64.sh
 ```
 
 A resposta do modelo será exibida no console em formato JSON.
@@ -37,9 +43,16 @@ A resposta do modelo será exibida no console em formato JSON.
 
 Caso esteja utilizando um modelo diferente, atualize a variável `MODEL_ID` no arquivo `.env` ou defina-a via variável de ambiente antes de executar o script.
 
+## Principais mudanças da refatoração
+
+- **Processamento robusto de imagens**: a função de processamento tenta diferentes formas de decodificar os bytes recebidos, permitindo chamadas em base64, binário ou JSON.
+- **Suporte a múltiplos formatos**: validação para PNG, JPEG, GIF e WebP.
+- **Logs de depuração detalhados**: ativados para facilitar a análise de erros.
+- **Scripts de teste**: `run-lambda-server.sh` inicia a API local e `test-api-base64.sh` envia uma imagem de exemplo.
+
 ## Lambda via API Gateway
 
-O diretório `lambda/` contém uma função preparada para ser executada como AWS
+O diretório `app/` contém a função preparada para ser executada como AWS
 Lambda. Ela recebe uma imagem enviada pelo API Gateway e repassa o conteúdo ao
 modelo do Bedrock usando a mesma lógica do script de linha de comando.
 
@@ -50,10 +63,10 @@ Lambda será o JSON retornado pelo Bedrock.
 
 ### Estrutura da Lambda
 
-A pasta `lambda/` segue uma organização em camadas para facilitar a manutenção do código:
+A pasta `app/` segue uma organização em camadas para facilitar a manutenção do código:
 
 ```
-lambda/
+app/
   src/
     handlers/           # Funções Lambda
     services/           # Integração com Bedrock e processamento de imagem
