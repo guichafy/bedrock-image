@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   bedrock-image
-  
+
   Sample SAM Template for bedrock-image
 
 Globals:
@@ -14,7 +14,7 @@ Resources:
   BedrockImageFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lambda/
+      CodeUri: ../app/
       Handler: index.handler
       Runtime: nodejs18.x
       Environment:
@@ -22,12 +22,12 @@ Resources:
           AWS_REGION: !Ref AWS::Region
           MODEL_ID: anthropic.claude-3-sonnet-2024-04-09-v1:0
       Policies:
-        - Statement:
-          - Effect: Allow
-            Action:
-              - bedrock:InvokeModel
-              - bedrock:InvokeModelWithResponseStream
-            Resource: '*'
+      - Statement:
+        - Effect: Allow
+          Action:
+          - bedrock:InvokeModel
+          - bedrock:InvokeModelWithResponseStream
+          Resource: '*'
       Events:
         BedrockImageApi:
           Type: Api
@@ -35,7 +35,7 @@ Resources:
             Path: /describe-image
             Method: post
             RequestParameters:
-              - method.request.header.Content-Type
+            - method.request.header.Content-Type
             RestApiId: !Ref ServerlessRestApi
 
   ServerlessRestApi:
@@ -43,8 +43,8 @@ Resources:
     Properties:
       StageName: Prod
       BinaryMediaTypes:
-        - "image/*"
-        - "application/octet-stream"
+      - "image/*"
+      - "application/octet-stream"
 
 Outputs:
   BedrockImageApi:
