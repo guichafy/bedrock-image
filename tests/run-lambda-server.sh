@@ -28,7 +28,7 @@ export DOCKER_HOST=unix://$HOME/.docker/run/docker.sock
 echo "Iniciando SAM local API..."
 echo "Endpoint estará disponível em: http://localhost:3000/describe-image"
 echo "Para testar, use:"
-echo "curl -X POST -H 'Content-Type: image/png' --data-binary @what-is-this.png http://localhost:3000/describe-image"
+echo "curl -X POST -F 'file=@what-is-this.png;type=image/png' http://localhost:3000/describe-image"
 echo ""
 echo "Pressione Ctrl+C para parar o servidor"
 echo ""
