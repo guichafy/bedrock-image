@@ -31,10 +31,10 @@ cp .env.example .env
 ./tests/run-lambda-server.sh
 ```
 
-2. Em outro terminal, envie uma imagem em base64 para a API local:
+2. Em outro terminal, envie uma imagem como arquivo multipart para a API local:
 
 ```bash
-./tests/test-api-base64.sh
+./tests/test-api-file.sh
 ```
 
 A resposta do modelo será exibida no console em formato JSON.
@@ -48,7 +48,7 @@ Caso esteja utilizando um modelo diferente, atualize a variável `MODEL_ID` no a
 - **Processamento robusto de imagens**: a função de processamento tenta diferentes formas de decodificar os bytes recebidos, permitindo chamadas em base64, binário ou JSON.
 - **Suporte a múltiplos formatos**: validação para PNG, JPEG, GIF e WebP.
 - **Logs de depuração detalhados**: ativados para facilitar a análise de erros.
-- **Scripts de teste**: `run-lambda-server.sh` inicia a API local e `test-api-base64.sh` envia uma imagem de exemplo.
+- **Scripts de teste**: `run-lambda-server.sh` inicia a API local e `test-api-file.sh` envia uma imagem de exemplo.
 
 ## Lambda via API Gateway
 
@@ -57,9 +57,9 @@ Lambda. Ela recebe uma imagem enviada pelo API Gateway e repassa o conteúdo ao
 modelo do Bedrock usando a mesma lógica do script de linha de comando.
 
 Para utilizá-la, configure o API Gateway para encaminhar o corpo da requisição
-como base64 (definindo `isBase64Encoded: true`). O cabeçalho `Content-Type`
-deve indicar o formato da imagem (por exemplo, `image/png`). A resposta da
-Lambda será o JSON retornado pelo Bedrock.
+como base64 (definindo `isBase64Encoded: true`) ao enviar arquivos no formato
+`multipart/form-data`. O cabeçalho `Content-Type` deve conter o boundary
+correto e a resposta da Lambda será o JSON retornado pelo Bedrock.
 
 ### Estrutura da Lambda
 

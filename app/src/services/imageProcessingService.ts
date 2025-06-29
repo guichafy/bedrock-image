@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { isValidImageFormat, detectImageFormat, getFormatFromContentType } from '../utils/imageValidator';
 import { InvalidImageError } from '../errors/customErrors';
 import logger from '../utils/logger';
+import { parse } from 'parse-multipart-data';
 
 export function parseBody(event: APIGatewayProxyEvent): { imageBytes: Buffer; format: string } {
   logger.debug('=== DEBUG: Event Analysis ===');
@@ -25,6 +26,23 @@ export function parseBody(event: APIGatewayProxyEvent): { imageBytes: Buffer; fo
   }
 
   logger.debug('=== DEBUG: Processing Body ===');
+
+  if (contentType.startsWith('multipart/form-data')) {
+    try {
+      const boundaryMatch = contentType.match(/boundary=(.*)/);
+      if (!boundaryMatch) throw new Error('Boundary not found');
+      const bodyBuffer = Buffer.from(event.body as string, (event as any).isBase64Encoded ? 'base64' : 'binary');
+      const parts = parse(bodyBuffer, boundaryMatch[1]);
+      const filePart = parts.find(p => p.filename);
+      if (filePart) {
+        imageBytes = Buffer.from(filePart.data);
+      } else {
+        attempts.push('multipart: file part not found');
+      }
+    } catch (e: any) {
+      attempts.push('multipart: ' + e.message);
+    }
+  }
 
   if (contentType === 'application/json') {
     try {
