@@ -17,7 +17,7 @@
     "testEnvironment": "node",
     "collectCoverageFrom": ["src/**/*.js"],
     "coverageThreshold": {
-      "global": { "lines": 50 }
+      "global": { "lines": 80 }
     }
   }
 }
