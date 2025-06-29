@@ -28,7 +28,7 @@ Este guia explica como testar a função Lambda localmente usando SAM CLI e suas
 - `template.yaml` - Template SAM para definir a infraestrutura
 - `env.json` - Variáveis de ambiente para a Lambda
 - `test-lambda.sh` - Script para iniciar o servidor local
-- `test-api.sh` - Script para testar a API
+- `test-api-file.sh` - Script para testar a API
 
 ## Como Testar
 
@@ -46,15 +46,14 @@ Este comando:
 ### 2. Testar a API (em outro terminal)
 
 ```bash
-./test-api.sh
+./test-api-file.sh
 ```
 
 Ou manualmente com curl:
 
 ```bash
 curl -X POST \
-  -H "Content-Type: image/png" \
-  --data-binary @what-is-this.png \
+  -F "file=@what-is-this.png;type=image/png" \
   http://localhost:3000/describe-image
 ```
 
@@ -63,14 +62,12 @@ curl -X POST \
 ```bash
 # Para JPG
 curl -X POST \
-  -H "Content-Type: image/jpeg" \
-  --data-binary @sua-imagem.jpg \
+  -F "file=@sua-imagem.jpg;type=image/jpeg" \
   http://localhost:3000/describe-image
 
 # Para PNG
 curl -X POST \
-  -H "Content-Type: image/png" \
-  --data-binary @sua-imagem.png \
+  -F "file=@sua-imagem.png;type=image/png" \
   http://localhost:3000/describe-image
 ```
 

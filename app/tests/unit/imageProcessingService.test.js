@@ -188,3 +188,33 @@ test('parseBody handles empty body string', () => {
   };
   expect(() => parseBody(event)).toThrow(InvalidImageError);
 });
+
+// new tests for multipart/form-data support
+test('parseBody handles multipart file upload', () => {
+  const boundary = '----testboundary';
+  const multipartBody =
+    `--${boundary}\r\n` +
+    `Content-Disposition: form-data; name="file"; filename="img.png"\r\n` +
+    `Content-Type: image/png\r\n\r\n` +
+    pngBuffer.toString('binary') +
+    `\r\n--${boundary}--\r\n`;
+  const event = {
+    headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
+    body: Buffer.from(multipartBody, 'binary').toString('base64'),
+    isBase64Encoded: true,
+  };
+  const result = parseBody(event);
+  expect(Buffer.isBuffer(result.imageBytes)).toBe(true);
+  expect(result.format).toBe('png');
+});
+
+test('parseBody throws when multipart has no file', () => {
+  const boundary = '----testboundary';
+  const multipartBody = `--${boundary}--\r\n`;
+  const event = {
+    headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
+    body: Buffer.from(multipartBody, 'binary').toString('base64'),
+    isBase64Encoded: true,
+  };
+  expect(() => parseBody(event)).toThrow(InvalidImageError);
+});
