@@ -4,4 +4,4 @@ const logger = {
   debug: console.debug
 };
 
-module.exports = logger;
+export default logger;

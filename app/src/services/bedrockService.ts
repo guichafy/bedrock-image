@@ -1,11 +1,11 @@
-const { BedrockRuntimeClient, ConverseCommand } = require('@aws-sdk/client-bedrock-runtime');
-const { DEFAULT_REGION, DEFAULT_MODEL } = require('../config/constants');
-const logger = require('../utils/logger');
+import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
+import { DEFAULT_REGION, DEFAULT_MODEL } from '../config/constants';
+import logger from '../utils/logger';
 
 const client = new BedrockRuntimeClient({ region: DEFAULT_REGION });
 
-async function describeImage(imageBytes, format) {
-  const params = {
+export async function describeImage(imageBytes: Buffer, format: string) {
+  const params: any = {
     modelId: DEFAULT_MODEL,
     messages: [
       {
@@ -22,5 +22,3 @@ async function describeImage(imageBytes, format) {
   logger.debug('Sending request to Bedrock');
   return client.send(command);
 }
-
-module.exports = { describeImage };
